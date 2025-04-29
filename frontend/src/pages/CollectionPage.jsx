@@ -23,8 +23,10 @@ const CollectionPage = () => {
     // Adding Event listner for Click
     document.addEventListener("mousedown", handleClickOutside);
     // removing event listner
-    document.removeEventListener("mousedown", handleClickOutside);
-  });
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
