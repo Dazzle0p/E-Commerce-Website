@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
+const userRoutes = require("./routes/userRoutes");
+const productRoutes = require("./routes/productRoutes");
 
 const app = express();
 app.use(express.json());
@@ -17,6 +19,10 @@ connectDB();
 app.get("/", (req, res) => {
   res.send("Welcome To Sushi API!");
 });
+
+//API Routes
+app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server in running on http://localhost:${PORT}`);
