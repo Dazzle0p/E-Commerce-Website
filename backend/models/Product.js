@@ -100,7 +100,7 @@ const productSchema = new mongoose.Schema(
       width: Number,
       height: Number,
     },
-    Weight: Number,
+    weight: Number,
   },
   { timestamps: true }
 );

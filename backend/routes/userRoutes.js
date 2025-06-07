@@ -8,7 +8,7 @@ const { protect } = require("../middleware/authMiddleware");
 // @desc Register a new User
 // @access Public
 
-router.post("/register", async (req, protect, res) => {
+router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
