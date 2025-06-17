@@ -4,7 +4,7 @@ import {
   HiOutlineShoppingBag,
   HiBars3BottomRight,
 } from "react-icons/hi2";
-import SearchBar from "./Searchbar";
+import SearchBar from "./SearchBar";
 import Cartdrawer from "../Layout/Cartdrawer";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
