@@ -187,4 +187,73 @@ router.get("/", async (req, res) => {
   }
 });
 
+// @route POST /api/cart/merge
+// @desc Merge guest cart into user Cart at login
+// @access Private
+
+router.post("/merge", protect, async (req, res) => {
+  const { guestId } = req.body;
+
+  try {
+    //Find the guest cart
+    const guestCart = await Cart.findOne({ guestId });
+    const userCart = await Cart.findOne({ user: req.user._id });
+
+    if (guestCart) {
+      if (guestCart.products.length === 0) {
+        return res.status(400).json({ message: "Guest cart is Empty" });
+      }
+
+      if (userCart) {
+        guestCart.products.forEach((guestItem) => {
+          const productIndex = userCart.products.findIndex(
+            (item) =>
+              item.productId.toString() === guestItem.productId.toString() &&
+              item.size === guestItem.size &&
+              item.color === guestItem.color
+          );
+
+          if (productIndex > -1) {
+            // If the item exists update the quantity
+            userCart.products[productIndex].quantity += guestItem.quantity;
+          } else {
+            // Add item to the user cart
+            userCart.products.push(guestItem);
+          }
+        });
+
+        userCart.totalPrice = userCart.products.reduce(
+          (acc, item) => acc + item.price * item.quantity,
+          0
+        );
+        await userCart.save();
+
+        // Remove the user cart after merging
+        try {
+          await Cart.findOneAndDelete({ guestId });
+        } catch (error) {
+          console.error("Error deleting guest cart :", error);
+        }
+        res.status(200).json(userCart);
+      } else {
+        // if user has no existing cart. assign the guest cart to user cart
+        guestCart.user = req.user._id;
+        guestCart.guestId = undefined;
+        await guestCart.save();
+
+        res.status(200).json(guestCart);
+      }
+    } else {
+      if (userCart) {
+        // Guest cart has already merged return the user cart
+        return res.status(200).json(userCart);
+      }
+      res.status(404).json({ message: "Guest cart Not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "server error" });
+  }
+});
+
 module.exports = router;
