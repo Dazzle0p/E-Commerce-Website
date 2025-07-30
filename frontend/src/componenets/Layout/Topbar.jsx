@@ -20,7 +20,10 @@ const Topbar = () => {
         </div>
 
         <div className="text-sm text-center flex-grow">
-          <span>We Ship WorldWide - Fast and Reliable Shipping!</span>
+          <span>
+            IMPORTANT : Currently appication is running on PicSum URL that's why
+            there is Random Images
+          </span>
         </div>
         <div className="text-sm hidden md:block">
           <a href="tel:+1234567890" className="hover:text-gray-300">
