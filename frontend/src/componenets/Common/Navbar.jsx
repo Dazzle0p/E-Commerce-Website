@@ -32,7 +32,7 @@ const NavBar = () => {
       <nav className="container flex mx-auto items-center justify-between py-4 px-6">
         {/* Left -> Logo */}
         <Link to="/" className="text-2xl font-medium">
-          Rabbit
+          Vastram
         </Link>
         {/* Cente Navigation Links */}
         <div className="hidden md:flex space-x-6">
