@@ -81,4 +81,4 @@ frontend/
 ## Environment Variables
 
 - `backend/.env`: MongoDB URI, JWT secret, etc.
-- `frontend/.env
+- `frontend/.env` : VITE_BACKEND_URL, VITE_PAYPAL_CLIENT_ID
