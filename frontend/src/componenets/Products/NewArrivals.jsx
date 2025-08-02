@@ -10,7 +10,6 @@ const NewArrivals = () => {
   const [scrollLeft, setScrollLeft] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-
   const [newArrivals, setNewArrivals] = useState([]);
 
   useEffect(() => {
@@ -60,12 +59,12 @@ const NewArrivals = () => {
       setCanScrollRight(rightScrollable);
     }
 
-    console.log({
-      scrollLeft: container.scrollLeft,
-      clientWidth: container.clientWidth,
-      containerScrollWidth: container.scrollWidth,
-      offsetLeft: scrollRef.current.offsetLeft,
-    });
+    // console.log({
+    //   scrollLeft: container.scrollLeft,
+    //   clientWidth: container.clientWidth,
+    //   containerScrollWidth: container.scrollWidth,
+    //   offsetLeft: scrollRef.current.offsetLeft,
+    // });
   };
 
   useEffect(() => {

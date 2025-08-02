@@ -105,7 +105,7 @@ const productSlice = createSlice({
     setFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
     },
-    clearFilters: (state, action) => {
+    clearFilters: (state) => {
       state.filters = {
         category: "",
         size: "",

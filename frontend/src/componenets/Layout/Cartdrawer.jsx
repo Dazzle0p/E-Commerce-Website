@@ -2,12 +2,21 @@ import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import CartContent from "../Cart/CartContent";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Cartdrawer = ({ openDrawer, toggleCartDrawer }) => {
   const navigate = useNavigate();
+  const { user, guestId } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
+  const userId = user ? user._id : null;
+
   const handleCheckout = () => {
     toggleCartDrawer();
-    navigate("/checkout");
+    if (!user) {
+      navigate("/login?redirect=checkout");
+    } else {
+      navigate("/checkout");
+    }
   };
   return (
     <div
@@ -27,20 +36,26 @@ const Cartdrawer = ({ openDrawer, toggleCartDrawer }) => {
           Your Cart
         </h2>
         {/* Component for card content */}
-        <CartContent />
+        {cart && cart?.products?.length > 0 ? (
+          <CartContent cart={cart} userId={userId} guestId={guestId} />
+        ) : (
+          <p>Your cart is empty.</p>
+        )}
       </div>
       {/* CheckOut Button */}
-      <div className="p-4 bg-white sticky bottom-0">
-        <button
-          onClick={handleCheckout}
-          className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition"
-        >
-          Checkout
-        </button>
-        <p className="text-sm tracking-tighter text-gray-500 mt-2 text-center ">
-          Shipping Taxes and Discount Codes Calculated at Checkout.
-        </p>
-      </div>
+      {cart && cart?.products?.length > 0 && (
+        <div className="p-4 bg-white sticky bottom-0">
+          <button
+            onClick={handleCheckout}
+            className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition"
+          >
+            Checkout
+          </button>
+          <p className="text-sm tracking-tighter text-gray-500 mt-2 text-center ">
+            Shipping Taxes and Discount Codes Calculated at Checkout.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

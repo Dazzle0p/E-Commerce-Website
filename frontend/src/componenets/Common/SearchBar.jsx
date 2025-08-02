@@ -1,17 +1,28 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { HiMagnifyingGlass, HiMiniXMark } from "react-icons/hi2";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setFilters } from "../../redux/slices/productsSlice";
+import { fetchProductsByFilters } from "../../redux/slices/productsSlice";
 
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setisOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleSerchToggle = () => {
     setisOpen(!isOpen);
   };
-  const handleSerch = (e) =>{
+
+  const handleSerch = (e) => {
     e.preventDefault();
-    console.log("Serch term : ", searchTerm);
+    dispatch(setFilters({ search: searchTerm }));
+    dispatch(fetchProductsByFilters({ search: searchTerm }));
+    navigate(`/collections/all?search=${searchTerm}`);
+
     setisOpen(false);
-  }
+  };
   return (
     <div
       className={`flex items-center justify-center w-full translation-all duration-300 ${
@@ -19,7 +30,10 @@ const SearchBar = () => {
       }`}
     >
       {isOpen ? (
-        <form onSubmit={handleSerch} className="relative flex items-center justify-center w-full">
+        <form
+          onSubmit={handleSerch}
+          className="relative flex items-center justify-center w-full"
+        >
           <div className="relative w-1/2">
             <input
               type="text"

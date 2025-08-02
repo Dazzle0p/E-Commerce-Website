@@ -22,7 +22,7 @@ const getCart = async (userId, guestId) => {
 // @access Public
 
 router.post("/", async (req, res) => {
-  const { productId, quantity, size, color, guestId, userId } = req.body;
+  const { productId, image, quantity, size, color, guestId, userId } = req.body;
   try {
     const product = await Product.findById(productId);
 
@@ -49,7 +49,7 @@ router.post("/", async (req, res) => {
         cart.products.push({
           productId,
           name: product.name,
-          image: product.images,
+          image,
           price: product.price,
           size,
           color,
@@ -97,6 +97,7 @@ router.post("/", async (req, res) => {
 
 router.put("/", async (req, res) => {
   const { productId, quantity, size, color, guestId, userId } = req.body;
+
   try {
     let cart = await getCart(userId, guestId);
     if (!cart) return res.status(404).json({ message: "Cart not found" });
@@ -109,27 +110,73 @@ router.put("/", async (req, res) => {
     );
 
     if (productIndex > -1) {
-      // UPDATE Quantity
+      let updatedProducts = [...cart.products];
+
       if (quantity > 0) {
-        cart.products[productIndex].quantity = quantity;
+        updatedProducts[productIndex].quantity = quantity;
       } else {
-        cart.products.splice(productIndex, 1); // Remove the product if the quantity is zero
+        updatedProducts.splice(productIndex, 1); // remove product
       }
 
-      cart.totalPrice = cart.products.reduce(
+      const updatedTotal = updatedProducts.reduce(
         (acc, item) => acc + item.price * item.quantity,
         0
       );
-      await cart.save();
-      return res.status(200).json(cart);
+
+      const updatedCart = await Cart.findByIdAndUpdate(
+        cart._id,
+        {
+          products: updatedProducts,
+          totalPrice: updatedTotal,
+        },
+        { new: true } // return updated cart
+      );
+
+      return res.status(200).json(updatedCart);
     } else {
-      return res.status(404).json({ message: "Product not founs in cart" });
+      return res.status(404).json({ message: "Product not found in cart" });
     }
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: "Server Error" });
   }
 });
+
+// router.put("/", async (req, res) => {
+//   const { productId, quantity, size, color, guestId, userId } = req.body;
+//   try {
+//     let cart = await getCart(userId, guestId);
+//     if (!cart) return res.status(404).json({ message: "Cart not found" });
+
+//     const productIndex = cart.products.findIndex(
+//       (p) =>
+//         p.productId.toString() === productId &&
+//         p.size === size &&
+//         p.color === color
+//     );
+
+//     if (productIndex > -1) {
+//       // UPDATE Quantity
+//       if (quantity > 0) {
+//         cart.products[productIndex].quantity = quantity;
+//       } else {
+//         cart.products.splice(productIndex, 1); // Remove the product if the quantity is zero
+//       }
+
+//       cart.totalPrice = cart.products.reduce(
+//         (acc, item) => acc + item.price * item.quantity,
+//         0
+//       );
+//       await cart.save();
+//       return res.status(200).json(cart);
+//     } else {
+//       return res.status(404).json({ message: "Product not founs in cart" });
+//     }
+//   } catch (e) {
+//     console.error(e);
+//     res.status(500).json({ message: "Server Error" });
+//   }
+// });
 
 // @route Delete /api/cart
 // @desc Delete the Product from the cart for user or guest

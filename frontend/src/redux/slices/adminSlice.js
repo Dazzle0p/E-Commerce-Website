@@ -11,7 +11,7 @@ export const fetchUsers = createAsyncThunk("admin/fetchUsers", async () => {
       },
     }
   );
-  response.data;
+  return response.data;
 });
 
 // Add the create User Action
@@ -48,25 +48,22 @@ export const updateUser = createAsyncThunk(
         },
       }
     );
-    response.data;
+    return response.data.user;
   }
 );
 
 // Delete User
-export const deleteUser = createAsyncThunk(
-  "admin/deleteUser",
-  async ({ id }) => {
-    const response = await axios.delete(
-      `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-        },
-      }
-    );
-    return id;
-  }
-);
+export const deleteUser = createAsyncThunk("admin/deleteUser", async (id) => {
+  const response = await axios.delete(
+    `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+      },
+    }
+  );
+  return id;
+});
 
 const adminSlice = createSlice({
   name: "admin",
@@ -108,7 +105,7 @@ const adminSlice = createSlice({
       })
       .addCase(addUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.users.push(action.payload.user);
+        state.users.push(action.payload);
       })
       .addCase(addUser.rejected, (state, action) => {
         state.loading = false;

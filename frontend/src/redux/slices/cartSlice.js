@@ -1,6 +1,5 @@
-import { createSlice, createAsyncThunk, Tuple } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { data } from "react-router-dom";
 
 // Helper function to load cart from localStorage
 const loadCartFromStorage = () => {
@@ -19,11 +18,14 @@ export const fetchCart = createAsyncThunk(
   async ({ userId, guestId }, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/cart`
+        `${import.meta.env.VITE_BACKEND_URL}/api/cart`,
+        {
+          params: {
+            userId,
+            guestId,
+          },
+        }
       );
-      params: {
-        userId, guestId;
-      }
 
       return response.data;
     } catch (error) {
@@ -37,13 +39,13 @@ export const fetchCart = createAsyncThunk(
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
   async (
-    { productId, quantity, size, color, guestId, userId },
+    { productId, image, quantity, size, color, guestId, userId },
     { rejectWithValue }
   ) => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/cart`,
-        { productId, quantity, size, color, guestId, userId }
+        { productId, image, quantity, size, color, guestId, userId }
       );
       return response.data;
     } catch (error) {
@@ -54,7 +56,7 @@ export const addToCart = createAsyncThunk(
 );
 
 // Update the quantity of an item in the cart
-export const updateCartItemQunatity = createAsyncThunk(
+export const updateCartItemQuantity = createAsyncThunk(
   "/cart/updateCartItemQuantity",
   async (
     { productId, quantity, guestId, userId, size, color },
@@ -67,6 +69,7 @@ export const updateCartItemQunatity = createAsyncThunk(
           productId,
           quantity,
           guestId,
+          userId,
           size,
           color,
         }
@@ -104,7 +107,7 @@ export const mergeCart = createAsyncThunk(
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/cart/merge`,
-        { guestId, userId },
+        { guestId, user },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
@@ -160,16 +163,16 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || "Failed to add to Cart";
       })
-      .addCase(updateCartItemQunatity.pending, (state) => {
+      .addCase(updateCartItemQuantity.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateCartItemQunatity.fulfilled, (state, action) => {
+      .addCase(updateCartItemQuantity.fulfilled, (state, action) => {
         state.loading = false;
         state.cart = action.payload;
         saveCartToStorage(action.payload);
       })
-      .addCase(updateCartItemQunatity.rejected, (state, action) => {
+      .addCase(updateCartItemQuantity.rejected, (state, action) => {
         state.loading = false;
         state.error =
           action.payload?.message || "Failed to Update item quantity";

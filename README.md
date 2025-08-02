@@ -29,7 +29,7 @@ A fully functional e-commerce platform built with the MERN stack (MongoDB, Expre
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/yourusername/e-commerce-website.git
+   git clone https://github.com/Dazzle0p/E-Commerce-Website.git
    cd e-commerce-website
    ```
 
